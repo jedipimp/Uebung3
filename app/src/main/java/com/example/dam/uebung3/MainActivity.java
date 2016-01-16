@@ -30,28 +30,11 @@ public class MainActivity extends AppCompatActivity {
         receiver = new ResponseReceiver();
         registerReceiver(receiver, filter);
 
-
-        System.out.println("hello1");
-
-
-
-
         TextView output = (TextView) findViewById(R.id.txt_output);
-        Log.d("MyApp", "I am here");
 
-
-
-        System.out.println("hello2");
-
-
+        // this shoudl start when you press a button
         Intent mlsIntent = new Intent(this, MLSIntentService.class);
         startService(mlsIntent);
-
-
-
-        System.out.println("hello3");
-
-
 
     }
 
