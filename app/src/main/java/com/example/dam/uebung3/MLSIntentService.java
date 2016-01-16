@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.Scanner;
 import com.example.dam.uebung3.MainActivity.ResponseReceiver;
 
+import org.json.JSONObject;
+
 /**
  * Created by dam on 16/01/16.
  */
@@ -47,9 +49,28 @@ public class MLSIntentService extends IntentService {
             //start listening to the stream
             Scanner inStream = new Scanner(connection.getInputStream());
 
+
+
 //process the stream and store it in StringBuilder
             while(inStream.hasNextLine())
                 response+=(inStream.nextLine());
+
+            String in = response;
+            JSONObject reader = new JSONObject(in);
+
+
+            JSONObject loc  = reader.getJSONObject("location");
+            String lat = loc.getString("lat");
+
+
+            String lng = loc.getString("lng");
+            Log.d("lat: ", lat);
+            Log.d("lng: ", lng);
+
+
+            // I WILL RETURN A STRING CONTAINING LAT AND LONG SEPERATED BY A SPACE
+dsfs
+
             Log.d("response: ", response);
             Intent broadcastIntent = new Intent();
             broadcastIntent.setAction(ResponseReceiver.ACTION_RESP);
