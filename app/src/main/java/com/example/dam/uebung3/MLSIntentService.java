@@ -32,11 +32,11 @@ public class MLSIntentService extends IntentService {
         Log.d("MyAppddd", "I am here234");
         try{
             Log.d("MyAppddd", "I am here999");
-            url = new URL("https://location.services.mozilla.com/v2/geosubmit?key=test");
+            url = new URL("https://location.services.mozilla.com/v1/geolocate?key=test");
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
             connection.setInstanceFollowRedirects(false);
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "text/plain");
             connection.setRequestProperty("charset", "utf-8");
             connection.connect();
