@@ -10,8 +10,8 @@ import java.util.Date;
 public class Record {
 
     private final Date date;
-    public double mlsLat;
-    public double mlsLng;
+    private double mlsLat;
+    private double mlsLng;
 
     private double gpsLat;
     private double gpsLng;
@@ -42,6 +42,26 @@ public class Record {
         this.gpsLng = gpsLng;
 
         distance = calculateDistance();
+    }
+
+    public double getMlsLat()
+    {
+        return mlsLat;
+    }
+
+    public double getMlsLng()
+    {
+        return mlsLng;
+    }
+
+    public double getGpsLat()
+    {
+        return gpsLat;
+    }
+
+    public double getGpsLng()
+    {
+        return gpsLng;
     }
 
 

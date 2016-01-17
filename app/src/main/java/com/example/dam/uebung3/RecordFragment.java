@@ -52,7 +52,7 @@ public class RecordFragment extends Fragment {
     {
 
 
-        getActivity().runOnUiThread(new Runnable() {
+      /*  getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 TextView mlsLngTextView = (TextView) getView().findViewById(R.id.mlsLngTextView);
@@ -61,7 +61,7 @@ public class RecordFragment extends Fragment {
                 TextView mlsLatTextView = (TextView) getView().findViewById(R.id.mlsLatTextView);
                 mlsLngTextView.setText(record.mlsLat + " SOME");
             }
-        });
+        });*/
 
 
 
@@ -97,11 +97,18 @@ public class RecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_record, container, false);
 
         TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
-        mlsLngTextView.setText(record.mlsLng+"");
+        mlsLngTextView.setText(record.getMlsLng()+"");
 
 
         TextView mlsLatTextView = (TextView) view.findViewById(R.id.mlsLatTextView);
-        mlsLatTextView.setText(record.mlsLat+"");
+        mlsLatTextView.setText(record.getMlsLat()+"");
+
+        TextView gpsLngTextView = (TextView) view.findViewById(R.id.gpsLngTextView);
+        gpsLngTextView.setText(record.getGpsLng()+"");
+
+
+        TextView gpsLatTextView = (TextView) view.findViewById(R.id.gpsLatTextView);
+        gpsLatTextView.setText(record.getGpsLat()+"");
 
         return view;
     }
