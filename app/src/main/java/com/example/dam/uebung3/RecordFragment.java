@@ -95,11 +95,14 @@ public class RecordFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
+
         TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
-        Log.d("hello", "hello");
-        mlsLngTextView.setText(record.mlsLng + "HASLD");
+        mlsLngTextView.setText(record.mlsLng+"");
+
+
         TextView mlsLatTextView = (TextView) view.findViewById(R.id.mlsLatTextView);
-        mlsLngTextView.setText(record.mlsLat + " SOME");
+        mlsLatTextView.setText(record.mlsLat+"");
+
         return view;
     }
 

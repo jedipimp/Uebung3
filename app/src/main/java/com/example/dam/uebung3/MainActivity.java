@@ -122,6 +122,9 @@ public class MainActivity extends FragmentActivity{
             String[] seperate = text.split(" ");
             mlsLat = Double.parseDouble(seperate[0]);
             mlsLng = Double.parseDouble(seperate[1]);
+
+            System.out.println("MLS-LAT : "+mlsLat);
+            System.out.println("MLS-LNG : "+mlsLng);
         }
     }
 }
