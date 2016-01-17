@@ -85,7 +85,7 @@ public class MLSIntentService extends IntentService {
             // I WILL RETURN A STRING CONTAINING LAT AND LONG SEPERATED BY A SPACE
             String sendBack = lat+ " "+ lng;
 
-            Log.d("response: ", response);
+
             Intent broadcastIntent = new Intent();
             broadcastIntent.setAction(ResponseReceiver.ACTION_RESP);
             broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);

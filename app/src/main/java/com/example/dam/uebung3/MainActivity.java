@@ -20,10 +20,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity{
 
 
     private ResponseReceiver receiver;
@@ -32,12 +35,42 @@ public class MainActivity extends FragmentActivity {
     Location ourLocation;
     private String provider;
 
+    double mlsLat;
+    double mlsLng;
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Button button= (Button) findViewById(R.id.scanAndSaveButtonId);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION);
+
+                ourLocation = locationManager
+                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                double gpsLat = ourLocation.getLatitude();
+                double gpsLng = ourLocation.getLongitude();
 
 
 
-    boolean isGPSEnabled;
-    boolean isNetworkEnabled;
-    boolean canGetLocation;
+                Intent mlsIntent = new Intent(v.getContext(), MLSIntentService.class);
+                startService(mlsIntent);
+                RecordFragment record = RecordFragment.newInstance(mlsLat,mlsLng,gpsLat,gpsLng);
+
+                // ADD THE FRAGMENT TO THE FRAGMENT CONTAINER
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.linearLayoutRecordsId, record).commit();
+
+            }
+        });
+
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,31 +78,15 @@ public class MainActivity extends FragmentActivity {
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION);
-
-        ourLocation = locationManager
-                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-
-
         setContentView(R.layout.activity_main);
         IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new ResponseReceiver();
         registerReceiver(receiver, filter);
 
-        TextView output = (TextView) findViewById(R.id.output2);
-
-        // this shoudl start when you press a button
-        Intent mlsIntent = new Intent(this, MLSIntentService.class);
-        startService(mlsIntent);
 
 
 
-
-
-        output.setText(ourLocation.toString());
 
     }
 
@@ -101,9 +118,10 @@ public class MainActivity extends FragmentActivity {
                 "com.example.intent.action.MESSAGE_PROCESSED";
         @Override
         public void onReceive(Context context, Intent intent) {
-            TextView t = (TextView)findViewById(R.id.txt_output);
             String text = intent.getStringExtra(MLSIntentService.PARAM_OUT_MSG);
-            t.setText(text);
+            String[] seperate = text.split(" ");
+            mlsLat = Double.parseDouble(seperate[0]);
+            mlsLng = Double.parseDouble(seperate[1]);
         }
     }
 }
