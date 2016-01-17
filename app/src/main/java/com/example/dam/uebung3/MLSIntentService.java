@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 import com.example.dam.uebung3.MainActivity.ResponseReceiver;
-
 import org.json.JSONObject;
 
 /**
@@ -55,6 +54,9 @@ public class MLSIntentService extends IntentService {
             while(inStream.hasNextLine())
                 response+=(inStream.nextLine());
 
+
+            /////////////////////////
+
             String in = response;
             JSONObject reader = new JSONObject(in);
 
@@ -66,6 +68,18 @@ public class MLSIntentService extends IntentService {
             String lng = loc.getString("lng");
             Log.d("lat: ", lat);
             Log.d("lng: ", lng);
+
+            //// THIS WAS THE MOZILLA LOCATION SERVIES PART
+
+
+
+
+            /// THIS IS THE GPS PART
+
+
+
+
+
 
 
             // I WILL RETURN A STRING CONTAINING LAT AND LONG SEPERATED BY A SPACE
