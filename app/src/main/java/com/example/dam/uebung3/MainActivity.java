@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -29,29 +30,27 @@ public class MainActivity extends FragmentActivity {
     // Acquire a reference to the system Location Manager
     LocationManager locationManager;
     Location ourLocation;
+    private String provider;
 
+
+
+
+    boolean isGPSEnabled;
+    boolean isNetworkEnabled;
+    boolean canGetLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                ourLocation = location;
-            }
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        // Register the listener with the Location Manager to receive location updates
+        Criteria criteria = new Criteria();
+        provider = locationManager.getBestProvider(criteria, false);
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        ourLocation = locationManager
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
 
 
         setContentView(R.layout.activity_main);
@@ -60,13 +59,20 @@ public class MainActivity extends FragmentActivity {
         receiver = new ResponseReceiver();
         registerReceiver(receiver, filter);
 
-        TextView output = (TextView) findViewById(R.id.txt_output);
+        TextView output = (TextView) findViewById(R.id.output2);
 
         // this shoudl start when you press a button
         Intent mlsIntent = new Intent(this, MLSIntentService.class);
         startService(mlsIntent);
 
+
+
+
+
+        output.setText(ourLocation.toString());
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
