@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends FragmentActivity{
 
@@ -38,6 +40,12 @@ public class MainActivity extends FragmentActivity{
     double mlsLat;
     double mlsLng;
 
+
+
+    // ARRAYLIST TO HOLD THE RECORDFRAGMENTS
+    private ArrayList<RecordFragment> recordFragmentList;
+
+
     @Override
     public void onStart()
     {
@@ -46,6 +54,8 @@ public class MainActivity extends FragmentActivity{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent mlsIntent = new Intent(v.getContext(), MLSIntentService.class);
+                startService(mlsIntent);
                 int permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION);
 
@@ -56,9 +66,10 @@ public class MainActivity extends FragmentActivity{
                 double gpsLng = ourLocation.getLongitude();
 
 
+                System.out.println("the values before create dare : "+mlsLat+ " <-- lat and lng "+mlsLng);
 
-                Intent mlsIntent = new Intent(v.getContext(), MLSIntentService.class);
-                startService(mlsIntent);
+
+
                 RecordFragment record = RecordFragment.newInstance(mlsLat,mlsLng,gpsLat,gpsLng);
 
                 // ADD THE FRAGMENT TO THE FRAGMENT CONTAINER

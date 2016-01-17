@@ -64,7 +64,10 @@ public class Record {
         return gpsLng;
     }
 
-
+public Date getDate()
+{
+    return date;
+}
     public double calculateDistance()
     {
         double pk = (float) (180.f/Math.PI);

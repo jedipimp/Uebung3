@@ -48,43 +48,10 @@ public class RecordFragment extends Fragment {
     }
 
 
-    public void onViewCreated()
-    {
-
-
-      /*  getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TextView mlsLngTextView = (TextView) getView().findViewById(R.id.mlsLngTextView);
-                Log.d("hello", "hello");
-                mlsLngTextView.setText(record.mlsLng + "HASLD");
-                TextView mlsLatTextView = (TextView) getView().findViewById(R.id.mlsLatTextView);
-                mlsLngTextView.setText(record.mlsLat + " SOME");
-            }
-        });*/
-
-
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-/*
-        TextView mlsLngTextView = (TextView)v.findViewById(R.id.mlsLngTextView);
-        mlsLngTextView.setText(mlsLng+"");
-
-        TextView gpsLatTextView = (TextView)v.findViewById(R.id.gpsLatTextView);
-        gpsLatTextView.setText(gpsLat+"");
-
-        TextView gpsLngTextView = (TextView)v.findViewById(R.id.gpsLngTextView);
-        gpsLngTextView.setText(gpsLng+"");
-
-        TextView distanceView = (TextView)v.findViewById(R.id.distanceTextView);
-        distanceView.setText(fragment.record.getDistance() + "");
-        TextView mlsLatTextView = (TextView)getView().findViewById(R.id.mlsLatTextView);
-        mlsLatTextView.setText(mlsLat + "");*/
         if (getArguments() != null) {
 
         }
@@ -109,6 +76,13 @@ public class RecordFragment extends Fragment {
 
         TextView gpsLatTextView = (TextView) view.findViewById(R.id.gpsLatTextView);
         gpsLatTextView.setText(record.getGpsLat()+"");
+
+        TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
+        dateTextView.setText(record.getDate()+"");
+
+        TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
+        distanceTextView.setText(record.getDistance()+"");
+
 
         return view;
     }

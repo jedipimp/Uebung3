@@ -30,9 +30,8 @@ public class MLSIntentService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("MyAppddd", "I am here234");
         try{
-            Log.d("MyAppddd", "I am here999");
+
             url = new URL("https://location.services.mozilla.com/v1/geolocate?key=test");
             connection = (HttpURLConnection) url.openConnection();
             connection.setDoOutput(true);
@@ -44,7 +43,6 @@ public class MLSIntentService extends IntentService {
 
             //build the string to store the response text from the server
             String response = "";
-            System.out.println("hello");
             //start listening to the stream
             Scanner inStream = new Scanner(connection.getInputStream());
 
@@ -66,21 +64,6 @@ public class MLSIntentService extends IntentService {
 
 
             String lng = loc.getString("lng");
-            Log.d("lat: ", lat);
-            Log.d("lng: ", lng);
-
-            //// THIS WAS THE MOZILLA LOCATION SERVIES PART
-
-
-
-
-            /// THIS IS THE GPS PART
-
-
-
-
-
-
 
             // I WILL RETURN A STRING CONTAINING LAT AND LONG SEPERATED BY A SPACE
             String sendBack = lat+ " "+ lng;
