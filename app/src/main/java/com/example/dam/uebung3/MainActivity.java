@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -45,12 +46,15 @@ public class MainActivity extends FragmentActivity{
     LocationManager locationManager;
     Location ourLocation;
     private String provider;
+    private MainRecordFragment mainRecordFragment;
 
     double mlsLat;
     double mlsLng;
 
     private static final String fileName = "records.txt";
-
+    private static final String STORE_CRYPT_KEY = "crypt_key";
+    public static final String STORE_MLS_KEY = "mls_key";
+    public static final String SHARED_PREFS_FILE = "data";
 
 
     // ARRAYLIST TO HOLD THE RECORDFRAGMENTS
@@ -64,8 +68,8 @@ public class MainActivity extends FragmentActivity{
         loadRecordFragments();
 
 
-        Button button= (Button) findViewById(R.id.scanAndSaveButtonId);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button scan = (Button) findViewById(R.id.scanButtonId);
+        scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent mlsIntent = new Intent(v.getContext(), MLSIntentService.class);
@@ -82,14 +86,29 @@ public class MainActivity extends FragmentActivity{
 
                 System.out.println("the values before create dare : " + mlsLat + " <-- lat and lng " + mlsLng);
 
+                // create main activity
+                MainRecordFragment mainRecordFragment = (MainRecordFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.mainRecordFragment);
 
-                RecordFragment record = RecordFragment.newInstance(mlsLat, mlsLng, gpsLat, gpsLng);
-                recordFragmentList.add(record);
+                mainRecordFragment.setRecord(new Record(mlsLat, mlsLng,
+                        ourLocation.getLatitude(), ourLocation.getLongitude(), ourLocation.getAccuracy()));
+                mainRecordFragment.refresh();
+
 
                 // ADD THE FRAGMENT TO THE FRAGMENT CONTAINER
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.linearLayoutRecordsId, record).commit();
+                //getSupportFragmentManager().beginTransaction()
+                  //      .add(R.id.linearLayoutRecordsId, mainRecordFragment).commit();
 
+            }
+        });
+
+        Button save = (Button) findViewById(R.id.saveButtonId);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //RecordFragment record = RecordFragment.newInstance(mlsLat, mlsLng, gpsLat, gpsLng);
+                //recordFragmentList.add(record);
             }
         });
 
@@ -133,9 +152,9 @@ public class MainActivity extends FragmentActivity{
             }catch (IOException e){ System.out.println(e.getMessage());}
         }
 
-        System.out.println("in on destroy");
         FileOutputStream outputStream;
         try {
+            String fileName = new Date().toString();
 
             outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
             DataOutputStream dos = new DataOutputStream(outputStream);
@@ -151,10 +170,10 @@ public class MainActivity extends FragmentActivity{
 
                 dos.writeDouble(record.getGpsLng());
 
+                dos.writeFloat(record.getGpsAcc());
+
                 dos.writeUTF(record.getDate().toString());
-
             }
-
 
             outputStream.close();
         } catch (Exception e) {
@@ -162,41 +181,45 @@ public class MainActivity extends FragmentActivity{
         }
     }
 
-    public void loadRecordFragments()
-    {DataInputStream dis;
-        File file = new File(getApplicationContext().getFilesDir(), fileName);
+    public void loadRecordFragments() {
+        DataInputStream dis;
+        File f = new File(getApplicationContext().getFilesDir(),".");
+        File[] files = f.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+
+                boolean s = true;
+                try {
+                    FileInputStream inputStream = new FileInputStream(file);
+                    dis = new DataInputStream(inputStream);
 
 
-        if (!file.exists()) {
-            return;
-        }
-        boolean s = true;
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            dis = new DataInputStream(inputStream);
+                    double mlsLat = dis.readDouble();
+                    double mlsLng = dis.readDouble();
+                    double gpsLat = dis.readDouble();
+                    double gpsLng = dis.readDouble();
+                    float gpsAcc = dis.readFloat();
+
+                    Date date = new Date();//Date.pdis.readUTF();
+
+                    RecordFragment rf = RecordFragment.newInstance(mlsLat, mlsLng, gpsLat, gpsLng, gpsAcc);
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.linearLayoutRecordsId, rf).commit();
 
 
-            while (s) {
-                double mlsLat = dis.readDouble();
-                double mlsLng = dis.readDouble();
-                double gpsLat = dis.readDouble();
-                double gpsLng = dis.readDouble();
-
-                Date date = new Date();//Date.pdis.readUTF();
-
-                RecordFragment rf = RecordFragment.newInstance(mlsLat,mlsLng,gpsLat,gpsLng);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.linearLayoutRecordsId, rf).commit();
+                    // add to the arraylist also
 
 
+                    dis.close();
 
-                // add to the arraylist also
-
+                } catch (EOFException eof) {
+                    s = false;
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-            dis.close();
-
-        }catch (EOFException eof) { s = false;}catch (IOException e) {System.out.println(e.getMessage());}
-
+        }
     }
 
 

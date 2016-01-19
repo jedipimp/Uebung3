@@ -2,6 +2,7 @@ package com.example.dam.uebung3;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.net.HttpURLConnection;
@@ -16,10 +17,12 @@ import org.json.JSONObject;
  */
 public class MLSIntentService extends IntentService {
 
-    public static  final String PARAM_OUT_MSG = "omsg";
+    public static final String PARAM_OUT_MSG = "omsg";
 
     URL url;
     HttpURLConnection connection;
+
+
 
     public MLSIntentService()
     {
@@ -31,6 +34,8 @@ public class MLSIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try{
+
+            String mlsKey;
 
             url = new URL("https://location.services.mozilla.com/v1/geolocate?key=test");
             connection = (HttpURLConnection) url.openConnection();

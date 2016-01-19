@@ -9,28 +9,27 @@ import java.util.Date;
  */
 public class Record {
 
-    private final Date date;
+    private static int idCounter = 0;
+
+    private final int id;
     private double mlsLat;
     private double mlsLng;
 
     private double gpsLat;
     private double gpsLng;
-
-    private static int idCounter = 0;
-    private final int id;
-
+    private float gpsAcc;
 
     private double distance;
+    private Date date;
 
     public Record()
     {
-        date = new Date();
         id = idCounter;
         ++idCounter;
 
     }
 
-    public Record(double mlslat, double mlsLng, double gpslat, double gpsLng)
+    public Record(double mlslat, double mlsLng, double gpslat, double gpsLng, float gpsAcc)
     {
         date = new Date();
         id = idCounter;
@@ -40,34 +39,35 @@ public class Record {
         this.mlsLng = mlsLng;
         this.gpsLat = gpslat;
         this.gpsLng = gpsLng;
+        this.gpsAcc = gpsAcc;
 
         distance = calculateDistance();
     }
 
-    public double getMlsLat()
-    {
-        return mlsLat;
-    }
+    public void setMlsLat(double mlsLat) {this.mlsLat = mlsLat; }
 
-    public double getMlsLng()
-    {
-        return mlsLng;
-    }
+    public double getMlsLat() {return mlsLat;}
 
-    public double getGpsLat()
-    {
-        return gpsLat;
-    }
+    public void setMlsLng(double mlsLng) {this.mlsLng = mlsLng; }
 
-    public double getGpsLng()
-    {
-        return gpsLng;
-    }
+    public double getMlsLng() {return mlsLng;}
 
-public Date getDate()
-{
-    return date;
-}
+    public void setGpsLat(double gpsLat) {this.gpsLat = gpsLat; }
+
+    public double getGpsLat() {return gpsLat;}
+
+    public void setGpsLng(double gpsLng) {this.gpsLng = gpsLng; }
+
+    public double getGpsLng() {return gpsLng;}
+
+    public void setGpsAcc(float gpsAcc) {this.gpsAcc = gpsAcc; }
+
+    public float getGpsAcc() {return gpsAcc;}
+
+    public Date getDate() {return date;}
+
+    public void setDate(Date date) {this.date = date;}
+
     public double calculateDistance()
     {
         double pk = (float) (180.f/Math.PI);
@@ -89,7 +89,5 @@ public Date getDate()
     {
         return distance;
     }
-
-
 
 }

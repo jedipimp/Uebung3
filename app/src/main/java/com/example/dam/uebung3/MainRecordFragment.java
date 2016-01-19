@@ -1,17 +1,13 @@
 package com.example.dam.uebung3;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dam.uebung3.Model.Record;
@@ -20,20 +16,21 @@ import com.example.dam.uebung3.Model.Record;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RecordFragment.OnFragmentInteractionListener} interface
+ * {@link MainRecordFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RecordFragment#newInstance} factory method to
+ * Use the {@link MainRecordFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecordFragment extends Fragment {
+public class MainRecordFragment extends Fragment {
     private Record record;
+    private View view;
 
     private OnFragmentInteractionListener mListener;
     //private MainActivity mainActivity;
 
 
 
-    public RecordFragment() {
+    public MainRecordFragment() {
 
     }
 
@@ -44,10 +41,10 @@ public class RecordFragment extends Fragment {
 
      * @return A new instance of fragment RecordFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static RecordFragment newInstance(double mlsLat, double mlsLng, double gpsLat, double gpsLng, float gpsAcc) {
-        RecordFragment fragment = new RecordFragment();
-        fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng, gpsAcc);
+
+    public static MainRecordFragment newInstance(double mlsLat, double mlsLng, double gpsLat, double gpsLng, float gpsAcc) {
+        MainRecordFragment fragment = new MainRecordFragment();
+        fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc);
         return fragment;
     }
 
@@ -64,35 +61,9 @@ public class RecordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_record, container, false);
+        view = inflater.inflate(R.layout.fragment_main_record, container, false);
 
-        TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
-        mlsLngTextView.setText(record.getMlsLng()+"");
-
-
-        TextView mlsLatTextView = (TextView) view.findViewById(R.id.mlsLatTextView);
-        mlsLatTextView.setText(record.getMlsLat()+"");
-
-        TextView gpsLngTextView = (TextView) view.findViewById(R.id.gpsLngTextView);
-        gpsLngTextView.setText(record.getGpsLng()+"");
-
-
-        TextView gpsLatTextView = (TextView) view.findViewById(R.id.gpsLatTextView);
-        gpsLatTextView.setText(record.getGpsLat()+"");
-
-        TextView gpsAccTextView = (TextView) view.findViewById(R.id.gpsAccuracyTextView);
-        gpsAccTextView.setText(record.getGpsAcc() + " m");
-
-        TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
-        dateTextView.setText(record.getDate()+"");
-
-        TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
-        distanceTextView.setText(record.getDistance()+"");
-
-        Button deleteButton= (Button) view.findViewById(R.id.deleteRecordButtonId);
-        deleteButton.setOnClickListener(new DeleteOnClickListener(this));
-
+        refresh();
 
         return view;
     }
@@ -140,5 +111,32 @@ public class RecordFragment extends Fragment {
     public Record getRecord()
     {
         return record;
+    }
+
+    public void setRecord(Record record) {this.record = record;}
+
+    public void refresh() {
+        if (record != null) {
+            TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
+            mlsLngTextView.setText("" + record.getMlsLng());
+
+            TextView mlsLatTextView = (TextView) view.findViewById(R.id.mlsLatTextView);
+            mlsLatTextView.setText("" + record.getMlsLat());
+
+            TextView gpsLngTextView = (TextView) view.findViewById(R.id.gpsLngTextView);
+            gpsLngTextView.setText("" + record.getGpsLng());
+
+            TextView gpsLatTextView = (TextView) view.findViewById(R.id.gpsLatTextView);
+            gpsLatTextView.setText("" + record.getGpsLat());
+
+            TextView gpsAccTextView = (TextView) view.findViewById(R.id.gpsAccuracyTextView);
+            gpsAccTextView.setText(record.getGpsAcc() + " m");
+
+            TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
+            dateTextView.setText("" + record.getDate());
+
+            TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
+            distanceTextView.setText("" + record.getDistance());
+        }
     }
 }

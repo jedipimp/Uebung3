@@ -3,17 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" ><![CDATA[
-    >
+    android:orientation="vertical" >
 
-    ]]>
-
-    <Button
+    <fragment
+        android:id="@+id/mainRecordFragment"
+        android:name="com.example.dam.uebung3.MainRecordFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Scan &amp; Save"
-        android:id="@+id/scanAndSaveButtonId"
-        android:layout_gravity="center_horizontal" />
+        tools:layout="@layout/fragment_main_record" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan"
+            android:id="@+id/scanButtonId"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.50" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/saveButtonId"
+            android:layout_weight="0.49" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
