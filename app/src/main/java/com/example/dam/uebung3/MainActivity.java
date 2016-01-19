@@ -74,7 +74,7 @@ public class MainActivity extends FragmentActivity{
                         Manifest.permission.ACCESS_COARSE_LOCATION);
 
                 ourLocation = locationManager
-                        .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 double gpsLat = ourLocation.getLatitude();
                 double gpsLng = ourLocation.getLongitude();
