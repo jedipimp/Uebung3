@@ -133,4 +133,9 @@ public class RecordFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public Record getRecord()
+    {
+        return record;
+    }
 }

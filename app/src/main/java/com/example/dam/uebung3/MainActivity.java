@@ -22,10 +22,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import com.example.dam.uebung3.Model.Record;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class MainActivity extends FragmentActivity{
@@ -40,6 +49,8 @@ public class MainActivity extends FragmentActivity{
     double mlsLat;
     double mlsLng;
 
+    private static final String fileName = "records.txt";
+
 
 
     // ARRAYLIST TO HOLD THE RECORDFRAGMENTS
@@ -50,6 +61,9 @@ public class MainActivity extends FragmentActivity{
     public void onStart()
     {
         super.onStart();
+        loadRecordFragments();
+
+
         Button button= (Button) findViewById(R.id.scanAndSaveButtonId);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +119,83 @@ public class MainActivity extends FragmentActivity{
         registerReceiver(receiver, filter);
 
         recordFragmentList = new ArrayList<RecordFragment>();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        File file = new File(getApplicationContext().getFilesDir(), fileName);
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            }catch (IOException e){ System.out.println(e.getMessage());}
+        }
+
+        System.out.println("in on destroy");
+        FileOutputStream outputStream;
+        try {
+
+            outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+            DataOutputStream dos = new DataOutputStream(outputStream);
+            for (RecordFragment recordFragment: recordFragmentList)
+            {
+                Record record = recordFragment.getRecord();
+
+                dos.writeDouble(record.getMlsLat());
+
+                dos.writeDouble(record.getMlsLng());
+
+                dos.writeDouble(record.getGpsLat());
+
+                dos.writeDouble(record.getGpsLng());
+
+                dos.writeUTF(record.getDate().toString());
+
+            }
+
+
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadRecordFragments()
+    {DataInputStream dis;
+        File file = new File(getApplicationContext().getFilesDir(), fileName);
+
+
+        if (!file.exists()) {
+            return;
+        }
+        boolean s = true;
+        try {
+            FileInputStream inputStream = new FileInputStream(file);
+            dis = new DataInputStream(inputStream);
+
+
+            while (s) {
+                double mlsLat = dis.readDouble();
+                double mlsLng = dis.readDouble();
+                double gpsLat = dis.readDouble();
+                double gpsLng = dis.readDouble();
+
+                Date date = new Date();//Date.pdis.readUTF();
+
+                RecordFragment rf = RecordFragment.newInstance(mlsLat,mlsLng,gpsLat,gpsLng);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.linearLayoutRecordsId, rf).commit();
 
 
 
+                // add to the arraylist also
+
+            }
+            dis.close();
+
+        }catch (EOFException eof) { s = false;}catch (IOException e) {System.out.println(e.getMessage());}
 
     }
 
