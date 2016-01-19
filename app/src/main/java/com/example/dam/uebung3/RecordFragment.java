@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dam.uebung3.Model.Record;
@@ -27,9 +29,12 @@ public class RecordFragment extends Fragment {
     private Record record;
 
     private OnFragmentInteractionListener mListener;
+    //private MainActivity mainActivity;
+
+
 
     public RecordFragment() {
-        // Required empty public constructor
+
     }
 
     /**
@@ -43,7 +48,6 @@ public class RecordFragment extends Fragment {
     public static RecordFragment newInstance(double mlsLat, double mlsLng, double gpsLat, double gpsLng) {
         RecordFragment fragment = new RecordFragment();
         fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng);
-
         return fragment;
     }
 
@@ -82,6 +86,9 @@ public class RecordFragment extends Fragment {
 
         TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
         distanceTextView.setText(record.getDistance()+"");
+
+        Button deleteButton= (Button) view.findViewById(R.id.deleteRecordButtonId);
+        deleteButton.setOnClickListener(new DeleteOnClickListener(this));
 
 
         return view;

@@ -9,7 +9,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="209dp"
+        android:layout_height="244dp"
         android:layout_gravity="left|top"
         android:background="@drawable/border"
         android:layout_marginLeft="0dp">

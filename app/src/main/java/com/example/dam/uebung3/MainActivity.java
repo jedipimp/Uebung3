@@ -66,11 +66,11 @@ public class MainActivity extends FragmentActivity{
                 double gpsLng = ourLocation.getLongitude();
 
 
-                System.out.println("the values before create dare : "+mlsLat+ " <-- lat and lng "+mlsLng);
+                System.out.println("the values before create dare : " + mlsLat + " <-- lat and lng " + mlsLng);
 
 
-
-                RecordFragment record = RecordFragment.newInstance(mlsLat,mlsLng,gpsLat,gpsLng);
+                RecordFragment record = RecordFragment.newInstance(mlsLat, mlsLng, gpsLat, gpsLng);
+                recordFragmentList.add(record);
 
                 // ADD THE FRAGMENT TO THE FRAGMENT CONTAINER
                 getSupportFragmentManager().beginTransaction()
@@ -79,8 +79,17 @@ public class MainActivity extends FragmentActivity{
             }
         });
 
-
     }
+
+
+    public void deleteRecordFragment(RecordFragment recordFragment)
+    {
+        LinearLayout l = (LinearLayout)findViewById(R.id.linearLayoutRecordsId);
+        getSupportFragmentManager().beginTransaction()
+                .remove(recordFragment).commit();
+        recordFragmentList.remove(recordFragment);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +104,7 @@ public class MainActivity extends FragmentActivity{
         receiver = new ResponseReceiver();
         registerReceiver(receiver, filter);
 
+        recordFragmentList = new ArrayList<RecordFragment>();
 
 
 
