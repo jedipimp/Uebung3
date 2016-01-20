@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.example.dam.uebung3.Model.Record;
 
+import java.util.Date;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,7 +46,7 @@ public class MainRecordFragment extends Fragment {
 
     public static MainRecordFragment newInstance(double mlsLat, double mlsLng, double gpsLat, double gpsLng, float gpsAcc) {
         MainRecordFragment fragment = new MainRecordFragment();
-        fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc);
+        fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc,0,new Date());
         return fragment;
     }
 

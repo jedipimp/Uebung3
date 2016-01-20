@@ -3,6 +3,7 @@ package com.example.dam.uebung3.Util;
 import android.telephony.TelephonyManager;
 
 import com.example.dam.uebung3.Model.RadioType;
+import com.example.dam.uebung3.Model.Record;
 
 /**
  * Created by Mat on 20.01.2016.
@@ -40,5 +41,9 @@ public class Utils {
         }
 
         return null;
+    }
+
+    public static String getFilename(Record record) {
+        return record.getDate() + "_" + record.getId();
     }
 }

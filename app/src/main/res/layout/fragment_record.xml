@@ -11,17 +11,35 @@
         android:layout_width="match_parent"
         android:layout_height="264dp"
         android:layout_gravity="left|top"
-        android:background="@drawable/border"
+        android:background="@drawable/border_green"
         android:layout_marginLeft="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="MLS"
-            android:id="@+id/textView"
-            android:textStyle="bold"
-            android:layout_marginLeft="3dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="MLS"
+                android:id="@+id/textView"
+                android:textStyle="bold"
+                android:layout_marginLeft="3dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="id: 1"
+                android:id="@+id/recordIdTextView"
+                android:textAlignment="viewEnd"
+                android:layout_marginRight="10dp"
+                android:textStyle="bold|italic"
+                android:layout_marginTop="5dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -189,4 +207,5 @@
             android:id="@+id/deleteRecordButtonId" />
 
     </LinearLayout>
+
 </FrameLayout>

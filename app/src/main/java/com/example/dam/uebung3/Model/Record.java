@@ -1,6 +1,9 @@
 package com.example.dam.uebung3.Model;
 
+import android.content.SharedPreferences;
 import android.util.FloatMath;
+
+import com.example.dam.uebung3.MainActivity;
 
 import java.util.Date;
 
@@ -9,9 +12,7 @@ import java.util.Date;
  */
 public class Record {
 
-    private static int idCounter = 0;
-
-    private final int id;
+    private int id;
     private double mlsLat;
     private double mlsLng;
 
@@ -24,22 +25,30 @@ public class Record {
 
     public Record()
     {
-        id = idCounter;
-        ++idCounter;
 
     }
 
-    public Record(double mlslat, double mlsLng, double gpslat, double gpsLng, float gpsAcc)
+    public Record(double mlslat, double mlsLng, double gpslat, double gpsLng, float gpsAcc, double distance, Date date)
     {
-        date = new Date();
-        id = idCounter;
-        ++idCounter;
-
         this.mlsLat = mlslat;
         this.mlsLng = mlsLng;
         this.gpsLat = gpslat;
         this.gpsLng = gpsLng;
         this.gpsAcc = gpsAcc;
+        this.distance = distance;
+        this.date = date;
+    }
+
+    public Record(int id, double mlslat, double mlsLng, double gpslat, double gpsLng, float gpsAcc, double distance, Date date)
+    {
+        this.id = id;
+        this.mlsLat = mlslat;
+        this.mlsLng = mlsLng;
+        this.gpsLat = gpslat;
+        this.gpsLng = gpsLng;
+        this.gpsAcc = gpsAcc;
+        this.distance = distance;
+        this.date = date;
 
     }
 
@@ -74,4 +83,12 @@ public class Record {
 
     public void setDistance(double distance) { this.distance = distance; }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
 }
+

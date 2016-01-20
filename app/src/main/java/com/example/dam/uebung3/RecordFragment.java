@@ -45,9 +45,9 @@ public class RecordFragment extends Fragment {
      * @return A new instance of fragment RecordFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecordFragment newInstance(double mlsLat, double mlsLng, double gpsLat, double gpsLng, float gpsAcc) {
+    public static RecordFragment newInstance(Record record) {
         RecordFragment fragment = new RecordFragment();
-        fragment.record = new Record(mlsLat,mlsLng,gpsLat,gpsLng, gpsAcc);
+        fragment.record = record;
         return fragment;
     }
 
@@ -56,9 +56,9 @@ public class RecordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
 
-        }
+
+
     }
 
     @Override
@@ -66,6 +66,10 @@ public class RecordFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
+
+        // set record id field
+        TextView recordId = (TextView) view.findViewById(R.id.recordIdTextView);
+        recordId.setText("id: " + record.getId());
 
         TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
         mlsLngTextView.setText(record.getMlsLng()+"");
