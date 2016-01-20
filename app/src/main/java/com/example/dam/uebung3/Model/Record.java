@@ -41,7 +41,6 @@ public class Record {
         this.gpsLng = gpsLng;
         this.gpsAcc = gpsAcc;
 
-        distance = calculateDistance();
     }
 
     public void setMlsLat(double mlsLat) {this.mlsLat = mlsLat; }
@@ -68,26 +67,11 @@ public class Record {
 
     public void setDate(Date date) {this.date = date;}
 
-    public double calculateDistance()
-    {
-        double pk = (float) (180.f/Math.PI);
-
-        double a1 = mlsLat / pk;
-        double a2 = mlsLng / pk;
-        double b1 = gpsLat / pk;
-        double b2 = gpsLng / pk;
-
-        double t1 = Math.cos(a1)*Math.cos(a2)*Math.cos(b1)*Math.cos(b2);
-        double t2 = Math.cos(a1)*Math.sin(a2)*Math.cos(b1)*Math.sin(b2);
-        double t3 = Math.sin(a1)*Math.sin(b1);
-        double tt = Math.acos(t1 + t2 + t3);
-
-        return 6366000*tt;
-    }
-
     public double getDistance()
     {
         return distance;
     }
+
+    public void setDistance(double distance) { this.distance = distance; }
 
 }

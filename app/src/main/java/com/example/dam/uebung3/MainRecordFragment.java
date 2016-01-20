@@ -31,7 +31,7 @@ public class MainRecordFragment extends Fragment {
 
 
     public MainRecordFragment() {
-
+        record = new Record();
     }
 
     /**
@@ -115,28 +115,33 @@ public class MainRecordFragment extends Fragment {
 
     public void setRecord(Record record) {this.record = record;}
 
+    public void clear() {
+        record = new Record();
+        refresh();
+    }
+
     public void refresh() {
         if (record != null) {
             TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
-            mlsLngTextView.setText("" + record.getMlsLng());
+            mlsLngTextView.setText( "" + (record.getMlsLng() == 0.0 ? "" : record.getMlsLng()) );
 
             TextView mlsLatTextView = (TextView) view.findViewById(R.id.mlsLatTextView);
-            mlsLatTextView.setText("" + record.getMlsLat());
+            mlsLatTextView.setText( "" + (record.getMlsLat() == 0.0 ? "" : record.getMlsLat()) );
 
             TextView gpsLngTextView = (TextView) view.findViewById(R.id.gpsLngTextView);
-            gpsLngTextView.setText("" + record.getGpsLng());
+            gpsLngTextView.setText("" + (record.getGpsLng() == 0.0 ? "" : record.getGpsLng()) );
 
             TextView gpsLatTextView = (TextView) view.findViewById(R.id.gpsLatTextView);
-            gpsLatTextView.setText("" + record.getGpsLat());
+            gpsLatTextView.setText("" + (record.getGpsLat() == 0.0 ? "" : record.getGpsLat()) );
 
             TextView gpsAccTextView = (TextView) view.findViewById(R.id.gpsAccuracyTextView);
-            gpsAccTextView.setText(record.getGpsAcc() + " m");
+            gpsAccTextView.setText( (record.getGpsAcc() == 0.0 ? "" : record.getGpsAcc() + " m") );
 
             TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
-            dateTextView.setText("" + record.getDate());
+            dateTextView.setText("" + (record.getDate() == null ? "" : record.getDate()) );
 
             TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
-            distanceTextView.setText("" + record.getDistance());
+            distanceTextView.setText("" + (record.getDistance() == 0.0 ? "" : record.getDistance() + " m") );
         }
     }
 }
