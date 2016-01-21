@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -66,10 +67,17 @@ public class MainActivity extends FragmentActivity{
     public static final String INTENT_MLS_API_KEY = "mls_key";
     public static final String STORE_SALT = "salt";
     public static final String STORE_IV = "iv";
+    private Location location = null;
+
+
+    private MyLocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
 
         // init id counter
         prefs = getSharedPreferences(SHARED_PREFS_FILE,MODE_PRIVATE);
@@ -77,6 +85,13 @@ public class MainActivity extends FragmentActivity{
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
+
+        Location lastKnownLocationn = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        locationListener = new MyLocationListener(lastKnownLocationn);
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+                20, locationListener);
 
         setContentView(R.layout.activity_main);
         IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
@@ -381,11 +396,10 @@ public class MainActivity extends FragmentActivity{
         wifiManager.startScan();
 
         // get GPS position
-        permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION);
+        //permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
+         //       Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        ourLocation = locationManager
-                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        ourLocation = locationListener.getLocation();
 
         double gpsLat = ourLocation.getLatitude();
         double gpsLng = ourLocation.getLongitude();
@@ -437,4 +451,6 @@ public class MainActivity extends FragmentActivity{
 
         return biv;
     }
+
+
 }
