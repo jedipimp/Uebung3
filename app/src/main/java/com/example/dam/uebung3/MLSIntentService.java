@@ -1,14 +1,19 @@
 package com.example.dam.uebung3;
 
+import android.app.AlertDialog;
 import android.app.IntentService;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.text.InputType;
+import android.widget.EditText;
 
 import com.example.dam.uebung3.MainActivity.ResponseReceiver;
 import com.example.dam.uebung3.Model.CellTower;
@@ -39,25 +44,19 @@ public class MLSIntentService extends IntentService {
 
     public static final String PARAM_OUT_MSG = "omsg";
 
+
     URL url;
     HttpURLConnection connection;
 
-
-
     public MLSIntentService()
     {
-
         super("MLSIntent Service");
-
-
     }
+
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        // TODO: user input for key and save it in shared prefs
-        String mlsKey = "test";
-
-
+        String mlsApiKey = intent.getStringExtra(MainActivity.INTENT_MLS_API_KEY);
 
 
         LocationResponse locationResponse = null;
@@ -66,7 +65,7 @@ public class MLSIntentService extends IntentService {
         // get WIFI infos
         List<WifiAccessPoint> wapList = new ArrayList<>();
 
-        String[] wifiMacAddresses = intent.getStringArrayExtra(MainActivity.WIFI_MAC_ADDRESSES);
+        String[] wifiMacAddresses = intent.getStringArrayExtra(MainActivity.INTENT_WIFI_MAC_ADDRESSES);
         for (String macAddress : wifiMacAddresses) {
             WifiAccessPoint wap = new WifiAccessPoint();
             wap.setMacAddress(macAddress);
@@ -143,9 +142,8 @@ public class MLSIntentService extends IntentService {
         System.out.println("JSON Request: " + jsonRequest);
 
         try {
-
             CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpPost request = new HttpPost("https://location.services.mozilla.com/v1/geolocate?key=test");
+            HttpPost request = new HttpPost("https://location.services.mozilla.com/v1/geolocate?key="+mlsApiKey);
 
             StringEntity stringEntity = new StringEntity(jsonRequest);
             request.addHeader("content-type", "application/x-www-form-urlencoded");
@@ -156,25 +154,6 @@ public class MLSIntentService extends IntentService {
 
             System.out.println("JSON Response: " + jsonResponse);
             locationResponse = gson.fromJson(jsonResponse, LocationResponse.class);
-            System.out.println("LocationResponse: " + locationResponse);
-            //start listening to the stream
-           /* Scanner inStream = new Scanner(connection.getInputStream());
-            String response = "";
-            //process the stream and store it in StringBuilder
-            while(inStream.hasNextLine())
-                response+=(inStream.nextLine());
-
-            String in = response;
-            JSONObject reader = new JSONObject(in);
-
-
-            JSONObject loc  = reader.getJSONObject("location");
-            String lat = loc.getString("lat");
-
-
-            String lng = loc.getString("lng");
-            Log.d("lat: ", lat);
-            Log.d("lng: ", lng);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,25 +161,16 @@ public class MLSIntentService extends IntentService {
 
         double lat = 0;
         double lng = 0;
-        //try {
-            //response = call.execute();
-            //System.out.println("RESPONSE MSG: " + response.message());
-            //locationResponse = response.body();
 
-            if (locationResponse != null) {
-                lat = locationResponse.getLocation().getLat();
-                lng = locationResponse.getLocation().getLng();
-            } else {
-                System.out.println("locationResponse == null");
-            }
-        /*} catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        if (locationResponse != null) {
+            lat = locationResponse.getLocation().getLat();
+            lng = locationResponse.getLocation().getLng();
+        } else {
+            System.out.println("locationResponse == null");
+        }
 
-
-        // I WILL RETURN A STRING CONTAINING LAT AND LONG SEPERATED BY A SPACE
+        // return a string containing lat and lng separated by a space
         String sendBack = lat+ " "+ lng;
-
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(ResponseReceiver.ACTION_RESP);
@@ -209,5 +179,4 @@ public class MLSIntentService extends IntentService {
         sendBroadcast(broadcastIntent);
 
     }
-
 }

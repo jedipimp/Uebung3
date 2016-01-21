@@ -1,8 +1,10 @@
 package com.example.dam.uebung3;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -14,10 +16,12 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.dam.uebung3.Model.Record;
@@ -32,7 +36,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -51,15 +54,15 @@ public class MainActivity extends FragmentActivity{
     private BroadcastReceiver wifiScanReceiver;
     private Button save;
     private SharedPreferences prefs;
+    private String mlsApiKey;
 
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String STORE_CRYPT_KEY = "crypt_key";
     public static final String STORE_MLS_KEY = "mls_key";
     public static final String SHARED_PREFS_FILE = "data";
     public static final String STORE_ID_COUNTER = "id_counter";
-    public static final String WIFI_MAC_ADDRESSES = "wifi_mac_addresses";
-
-
+    public static final String INTENT_WIFI_MAC_ADDRESSES = "wifi_mac_addresses";
+    public static final String INTENT_MLS_API_KEY = "mls_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +104,8 @@ public class MainActivity extends FragmentActivity{
                     System.out.println("Scanned MAC-Addresses: " + Arrays.toString(macAddresses));
                     // start intent MLS WebService Request
                     Intent mlsIntent = new Intent(c, MLSIntentService.class);
-                    mlsIntent.putExtra(WIFI_MAC_ADDRESSES, macAddresses);
+                    mlsIntent.putExtra(INTENT_WIFI_MAC_ADDRESSES, macAddresses);
+                    mlsIntent.putExtra(INTENT_MLS_API_KEY, mlsApiKey);
                     startService(mlsIntent);
                 }
             }
@@ -137,32 +141,7 @@ public class MainActivity extends FragmentActivity{
                 mainRecordFragment.clear();
                 save.setEnabled(false);
 
-                int permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
-                        Manifest.permission.CHANGE_WIFI_STATE);
-
-                // start WIFI search
-                registerReceiver(wifiScanReceiver,
-                        new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-                wifiManager.startScan();
-
-                // get GPS position
-                permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION);
-
-                ourLocation = locationManager
-                        .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                double gpsLat = ourLocation.getLatitude();
-                double gpsLng = ourLocation.getLongitude();
-
-                mainRecordFragment.getRecord().setDate(new Date());
-
-                // set GPS coordinates
-                mainRecordFragment.getRecord().setGpsLat(ourLocation.getLatitude());
-                mainRecordFragment.getRecord().setGpsLng(ourLocation.getLongitude());
-                mainRecordFragment.getRecord().setGpsAcc(ourLocation.getAccuracy());
-
-                mainRecordFragment.refresh();
+                checkMlsApiKey(v);
             }
         });
     }
@@ -327,5 +306,82 @@ public class MainActivity extends FragmentActivity{
         editor.commit();
 
         return idCounter;
+    }
+
+    private void checkMlsApiKey(View v) {
+        if (! prefs.contains(MainActivity.STORE_MLS_KEY)) {
+            System.out.println("not in Prefs");
+            showMLSInputDialog(v);
+            // restore key for prefs
+        } else {
+            System.out.println("IN Prefs!");
+            mlsApiKey = prefs.getString(MainActivity.STORE_MLS_KEY,"");
+            scan(v);
+        };
+    }
+
+    private void storeMlsApiKey() {
+        if (mlsApiKey != null && ! mlsApiKey.isEmpty()) {
+            // save to prefs
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(MainActivity.STORE_MLS_KEY, mlsApiKey);
+            editor.commit();
+        }
+    }
+
+    private void showMLSInputDialog(final View v) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter MLS API key:");
+
+        final EditText input = new EditText(this);
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mlsApiKey = input.getText().toString();
+                storeMlsApiKey();
+                scan(v);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void scan(View v) {
+        int permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
+                Manifest.permission.CHANGE_WIFI_STATE);
+
+        // start WIFI search
+        registerReceiver(wifiScanReceiver,
+                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        wifiManager.startScan();
+
+        // get GPS position
+        permissionCheck = ContextCompat.checkSelfPermission(v.getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        ourLocation = locationManager
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        double gpsLat = ourLocation.getLatitude();
+        double gpsLng = ourLocation.getLongitude();
+
+        mainRecordFragment.getRecord().setDate(new Date());
+
+        // set GPS coordinates
+        mainRecordFragment.getRecord().setGpsLat(ourLocation.getLatitude());
+        mainRecordFragment.getRecord().setGpsLng(ourLocation.getLongitude());
+        mainRecordFragment.getRecord().setGpsAcc(ourLocation.getAccuracy());
+
+        mainRecordFragment.refresh();
     }
 }
