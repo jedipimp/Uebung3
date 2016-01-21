@@ -9,15 +9,15 @@ import android.widget.LinearLayout;
 public class DeleteOnClickListener implements View.OnClickListener {
 
     RecordFragment recordFragment;
-public DeleteOnClickListener(RecordFragment recordFragment) {
+    public DeleteOnClickListener(RecordFragment recordFragment) {
         this.recordFragment = recordFragment;
-        }
+    }
 
-@Override public void onClick(View v) {
-    MainActivity mainActivity = (MainActivity) v.getContext();
-    LinearLayout l = (LinearLayout)mainActivity.findViewById(R.id.linearLayoutRecordsId);
-    l.removeView(v);
-    mainActivity.deleteRecordFragment(recordFragment);
-}
+    @Override public void onClick(View v) {
+        MainActivity mainActivity = (MainActivity) v.getContext();
+        LinearLayout l = (LinearLayout)mainActivity.findViewById(R.id.linearLayoutRecordsId);
+        l.removeView(v);
+        mainActivity.deleteRecordFragment(recordFragment);
+    }
 
 }

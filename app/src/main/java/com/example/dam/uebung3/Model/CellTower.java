@@ -70,7 +70,8 @@ public class CellTower {
     }
 
     public void setPsc(Integer psc) {
-        this.psc = psc;
+        if (psc != -1)
+            this.psc = psc;
     }
 
     public Integer getSignalStrength() {

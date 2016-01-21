@@ -2,6 +2,7 @@ package com.example.dam.uebung3;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.example.dam.uebung3.Model.Record;
 
+import java.io.File;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +30,7 @@ import com.example.dam.uebung3.Model.Record;
  */
 public class RecordFragment extends Fragment {
     private Record record;
+    private File file;
 
     private OnFragmentInteractionListener mListener;
     //private MainActivity mainActivity;
@@ -44,10 +48,10 @@ public class RecordFragment extends Fragment {
 
      * @return A new instance of fragment RecordFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static RecordFragment newInstance(Record record) {
+    public static RecordFragment newInstance(Record record, File file) {
         RecordFragment fragment = new RecordFragment();
         fragment.record = record;
+        fragment.file = file;
         return fragment;
     }
 
@@ -68,7 +72,7 @@ public class RecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_record, container, false);
 
         // set record id field
-        TextView recordId = (TextView) view.findViewById(R.id.recordIdTextView);
+        final TextView recordId = (TextView) view.findViewById(R.id.recordIdTextView);
         recordId.setText("id: " + record.getId());
 
         TextView mlsLngTextView = (TextView) view.findViewById(R.id.mlsLngTextView);
@@ -92,12 +96,24 @@ public class RecordFragment extends Fragment {
         dateTextView.setText(record.getDate()+"");
 
         TextView distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
-        distanceTextView.setText(record.getDistance()+"");
+        distanceTextView.setText(record.getDistance() + "");
 
-        Button deleteButton= (Button) view.findViewById(R.id.deleteRecordButtonId);
+        Button deleteButton = (Button) view.findViewById(R.id.deleteRecordButtonId);
         deleteButton.setOnClickListener(new DeleteOnClickListener(this));
 
 
+        Button sendEmailButton = (Button) view.findViewById(R.id.sendEmailRecordButtonId);
+        sendEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "MASE Übung 3");
+                intent.putExtra(Intent.EXTRA_TEXT, record.toString());
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+            }
+        });
         return view;
     }
 
@@ -137,7 +153,6 @@ public class RecordFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -145,4 +160,6 @@ public class RecordFragment extends Fragment {
     {
         return record;
     }
+
+    public File getFile() {return file;}
 }

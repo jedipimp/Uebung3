@@ -43,7 +43,8 @@ public class Utils {
         double t3 = Math.sin(a1)*Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
-        return 6366000*tt;
+        // round to 2 deciamal places
+        return Math.round((6366000*tt) * 100.0) / 100.0;
     }
 
     public static RadioType getRadioType(int cellType) {

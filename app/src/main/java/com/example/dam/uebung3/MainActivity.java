@@ -122,8 +122,9 @@ public class MainActivity extends FragmentActivity{
             public void onClick(View v) {
                 Record r = mainRecordFragment.getRecord();
                 r.setId(getNextRecordId());
+                File file = new File(getApplicationContext().getFilesDir(), Utils.getFilename(r));
 
-                RecordFragment recordFragment = RecordFragment.newInstance(r);
+                RecordFragment recordFragment = RecordFragment.newInstance(r, file);
 
                 // save to file
                 if (saveRecordFragment(recordFragment)) {
@@ -164,9 +165,7 @@ public class MainActivity extends FragmentActivity{
 
     public boolean saveRecordFragment(RecordFragment recordFragment) {
         Record record = recordFragment.getRecord();
-        String filename = Utils.getFilename(record);
-
-        File file = new File(getApplicationContext().getFilesDir(), filename);
+        File file = recordFragment.getFile();
 
         if (!file.exists()) {
             try {
@@ -178,7 +177,7 @@ public class MainActivity extends FragmentActivity{
 
         FileOutputStream outputStream;
         try {
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream = openFileOutput(file.getName(), Context.MODE_PRIVATE);
             DataOutputStream dos = new DataOutputStream(outputStream);
 
             /*dos.writeInt(record.getId());
@@ -243,7 +242,7 @@ public class MainActivity extends FragmentActivity{
                     Record r = Utils.decrypt(data, prefs.getString(STORE_MLS_KEY,""), getSalt(), getIV());
 
                     //RecordFragment rf = RecordFragment.newInstance(new Record(id,mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc,distance,date));
-                    RecordFragment rf = RecordFragment.newInstance(r);
+                    RecordFragment rf = RecordFragment.newInstance(r,file);
                     getSupportFragmentManager().beginTransaction()
                             .add(R.id.linearLayoutRecordsId, rf).commit();
 
