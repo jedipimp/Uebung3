@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,13 +57,15 @@ public class MainActivity extends FragmentActivity{
     private SharedPreferences prefs;
     private String mlsApiKey;
 
-    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private static final String STORE_CRYPT_KEY = "crypt_key";
     public static final String STORE_MLS_KEY = "mls_key";
     public static final String SHARED_PREFS_FILE = "data";
     public static final String STORE_ID_COUNTER = "id_counter";
     public static final String INTENT_WIFI_MAC_ADDRESSES = "wifi_mac_addresses";
     public static final String INTENT_MLS_API_KEY = "mls_key";
+    public static final String STORE_SALT = "salt";
+    public static final String STORE_IV = "iv";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,7 +181,7 @@ public class MainActivity extends FragmentActivity{
             outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
             DataOutputStream dos = new DataOutputStream(outputStream);
 
-            dos.writeInt(record.getId());
+            /*dos.writeInt(record.getId());
 
             dos.writeDouble(record.getMlsLat());
 
@@ -192,10 +195,15 @@ public class MainActivity extends FragmentActivity{
 
             dos.writeDouble(record.getDistance());
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String dateStr = dateFormatter.format(record.getDate());
+            String dateStr = Utils.FORMATTER.format(record.getDate());
 
-            dos.writeUTF(dateStr);
+            dos.writeUTF(dateStr);*/
+
+
+            byte[] encryptedRecord = Utils.encrypt(record, mlsApiKey, getSalt(), getIV());
+            System.out.println("SIZE: " + encryptedRecord.length);
+            dos.write(encryptedRecord);
+            dos.flush();
 
             outputStream.close();
         } catch (Exception e) {
@@ -217,7 +225,7 @@ public class MainActivity extends FragmentActivity{
                     FileInputStream inputStream = new FileInputStream(file);
                     dis = new DataInputStream(inputStream);
 
-                    int id = dis.readInt();
+                    /*int id = dis.readInt();
                     double mlsLat = dis.readDouble();
                     double mlsLng = dis.readDouble();
                     double gpsLat = dis.readDouble();
@@ -226,13 +234,18 @@ public class MainActivity extends FragmentActivity{
                     double distance = dis.readDouble();
 
                     String dateStr = dis.readUTF();
-                    Date date = dateFormatter.parse(dateStr);
-
-                    RecordFragment rf = RecordFragment.newInstance(new Record(id,mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc,distance,date));
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.linearLayoutRecordsId, rf).commit();
+                    Date date = Utils.FORMATTER.parse(dateStr);*/
+                    byte[] data = new byte[96];
+                    dis.readFully(data);
 
                     dis.close();
+
+                    Record r = Utils.decrypt(data, prefs.getString(STORE_MLS_KEY,""), getSalt(), getIV());
+
+                    //RecordFragment rf = RecordFragment.newInstance(new Record(id,mlsLat,mlsLng,gpsLat,gpsLng,gpsAcc,distance,date));
+                    RecordFragment rf = RecordFragment.newInstance(r);
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.linearLayoutRecordsId, rf).commit();
 
                 } catch (EOFException eof) {
                     eof.printStackTrace();
@@ -240,7 +253,10 @@ public class MainActivity extends FragmentActivity{
                     System.out.println(e.getMessage());
                 } catch (ParseException pe) {
                     pe.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
         }
     }
@@ -315,7 +331,7 @@ public class MainActivity extends FragmentActivity{
             // restore key for prefs
         } else {
             System.out.println("IN Prefs!");
-            mlsApiKey = prefs.getString(MainActivity.STORE_MLS_KEY,"");
+            mlsApiKey = prefs.getString(STORE_MLS_KEY,"");
             scan(v);
         };
     }
@@ -383,5 +399,43 @@ public class MainActivity extends FragmentActivity{
         mainRecordFragment.getRecord().setGpsAcc(ourLocation.getAccuracy());
 
         mainRecordFragment.refresh();
+    }
+
+    private byte[] getSalt() {
+        String salt;
+        byte[] bSalt;
+        if (prefs.contains(STORE_SALT)) {
+            salt = prefs.getString(STORE_SALT,"");
+            bSalt = Base64.decode(salt, Base64.DEFAULT);
+        } else {
+            bSalt = Utils.generateSalt();
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(STORE_SALT, Base64.encodeToString(bSalt,Base64.DEFAULT));
+            editor.commit();
+        }
+
+        return bSalt;
+    }
+
+    private byte[] getIV() {
+        String iv;
+        byte[] biv = null;
+        if (prefs.contains(STORE_IV)) {
+            iv = prefs.getString(STORE_IV,"");
+            biv = Base64.decode(iv, Base64.DEFAULT);
+        } else {
+            try {
+                biv = Utils.generateIV();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(STORE_IV, Base64.encodeToString(biv,Base64.DEFAULT));
+            editor.commit();
+        }
+
+        return biv;
     }
 }

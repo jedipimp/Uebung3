@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 import android.util.FloatMath;
 
 import com.example.dam.uebung3.MainActivity;
+import com.example.dam.uebung3.Util.Utils;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -89,6 +91,43 @@ public class Record {
 
     public int getId() {
         return id;
+    }
+
+
+    public String serialize() {
+        return id + "#" + mlsLat + "#" + mlsLng + "#" + gpsLat + "#" +
+                gpsLng + "#" + gpsAcc + "#" + distance + "#" + Utils.FORMATTER.format(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "id=" + id +
+                ", mlsLat=" + mlsLat +
+                ", mlsLng=" + mlsLng +
+                ", gpsLat=" + gpsLat +
+                ", gpsLng=" + gpsLng +
+                ", gpsAcc=" + gpsAcc +
+                ", distance=" + distance +
+                ", date=" + date +
+                '}';
+    }
+
+    public static Record newInstanceFromString(String str) {
+        String[] s = str.split("#");
+        try {
+            return new Record(Integer.valueOf(s[0]),
+                    Double.valueOf(s[1]),
+                    Double.valueOf(s[2]),
+                    Double.valueOf(s[3]),
+                    Double.valueOf(s[4]),
+                    Float.valueOf(s[5]),
+                    Double.valueOf(s[6]),
+                    Utils.FORMATTER.parse(s[7]));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
